@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run Run Run - Private Debug</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-page="auth">
+  <header class="topbar">
+    <div>
+      <h1>🛠️ Run Run Run</h1>
+      <p>Private debug tools (admin/developer only)</p>
+    </div>
+    <span class="badge">Debug</span>
+  </header>
+
+  <main class="container">
+    <section class="card setup-strip">
+      <div>
+        <h3>Connection Setup</h3>
+        <p id="authStatus" class="status-pill muted">Not logged in</p>
+      </div>
+      <label class="inline-field">
+        Base URL
+        <input id="baseUrl" type="text" placeholder="http://localhost:8082" />
+      </label>
+      <button id="saveBaseUrlBtn">Save Base URL</button>
+      <small>Developer use only</small>
+    </section>
+
+    <section class="card">
+      <h3>Profile test</h3>
+      <button id="meBtn">Load /users/me</button>
+      <pre id="meOutput"></pre>
+    </section>
+
+    <section class="card">
+      <h3>Live Log</h3>
+      <pre id="log"></pre>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

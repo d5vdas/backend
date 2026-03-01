@@ -82,5 +82,3 @@ If it returns `OK`, share that base URL with friends.
 
 ### Notes
 - Free tier may sleep after inactivity (first request can be slow).
-- After deploy, update Android frontend base URL in:
-  `frontend/app/src/main/java/com/runrunrun/frontend/data/ApiClient.kt`

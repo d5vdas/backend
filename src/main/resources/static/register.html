@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run Run Run - Register</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-page="auth">
+  <div class="auth-wallpaper" aria-hidden="true">
+    <div class="auth-blob auth-blob-a"></div>
+    <div class="auth-blob auth-blob-b"></div>
+  </div>
+
+  <header class="topbar">
+    <div>
+      <h1>🏃 Run Run Run</h1>
+      <p>Create your running account</p>
+    </div>
+    <span class="badge">Register</span>
+  </header>
+
+  <main class="container auth-page-layout">
+    <section class="card auth-side-panel">
+      <p class="hero-kicker">JOIN THE COMMUNITY</p>
+      <h2>Create your account and start your fitness journey.</h2>
+      <ul class="feature-list">
+        <li>🛰️ GPS-ready activity tracking</li>
+        <li>🔥 Personal progress timeline</li>
+        <li>💬 Social motivation and feedback</li>
+      </ul>
+    </section>
+
+    <section class="card auth-block auth-single auth-glass">
+      <h2>New user register</h2>
+      <p class="muted-line">Start tracking your runs in seconds.</p>
+      <label>Name <input id="regName" type="text" placeholder="Your full name" /></label>
+      <label>Email <input id="regEmail" type="email" placeholder="you@example.com" /></label>
+      <label>Password <input id="regPassword" type="password" placeholder="Min 6 characters" /></label>
+      <button id="registerBtn">Register</button>
+      <p class="switch-text">Already have an account? <a href="/signin.html">Sign in</a></p>
+    </section>
+
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

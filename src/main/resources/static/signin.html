@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run Run Run - Sign In</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-page="auth">
+  <div class="auth-wallpaper" aria-hidden="true">
+    <div class="auth-blob auth-blob-a"></div>
+    <div class="auth-blob auth-blob-b"></div>
+  </div>
+
+  <header class="topbar">
+    <div>
+      <h1>🏃 Run Run Run</h1>
+      <p>Welcome back runner</p>
+    </div>
+    <span class="badge">Sign In</span>
+  </header>
+
+  <main class="container auth-page-layout">
+    <section class="card auth-side-panel">
+      <p class="hero-kicker">WELCOME BACK</p>
+      <h2>Let’s continue your running streak.</h2>
+      <ul class="feature-list">
+        <li>📈 Track progress over time</li>
+        <li>👟 Resume activities instantly</li>
+        <li>🤝 Stay connected with runners</li>
+      </ul>
+    </section>
+
+    <section class="card auth-block auth-single auth-glass">
+      <h2>Already a user? Sign in</h2>
+      <p class="muted-line">Continue your training journey.</p>
+      <label>Email <input id="loginEmail" type="email" placeholder="you@example.com" /></label>
+      <label>Password <input id="loginPassword" type="password" placeholder="Enter password" /></label>
+      <div class="auth-btn-row">
+        <button id="loginBtn">Sign In</button>
+        <button id="logoutBtn" class="secondary">Logout</button>
+      </div>
+      <p class="switch-text">New here? <a href="/register.html">Create account</a></p>
+    </section>
+
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

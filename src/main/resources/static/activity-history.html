@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run Run Run - All Activities</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-page="activity-history">
+  <header class="topbar">
+    <div>
+      <h1>🏃 Run Run Run</h1>
+      <p>All Previous Activities</p>
+    </div>
+    <span class="badge">History</span>
+  </header>
+
+  <main class="container">
+    <section class="card hero">
+      <h2>Your Activity History</h2>
+      <p class="muted-line">Complete list of all your past activities.</p>
+      <button onclick="window.location.href='/activity.html'">← Back to Activity</button>
+      <button id="logoutBtn" class="secondary">Logout</button>
+    </section>
+
+    <section class="card">
+      <div id="allActivitiesList" class="activity-list"></div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run Run Run - Auth</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-page="auth">
+  <div class="live-wallpaper" aria-hidden="true">
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
+    <div class="aurora aurora-3"></div>
+    <div class="grid-glow"></div>
+  </div>
+
+  <header class="topbar">
+    <div>
+      <h1>🏃 Run Run Run</h1>
+      <p>Train smarter. Run stronger. Connect better.</p>
+    </div>
+    <span class="badge">Welcome</span>
+  </header>
+
+  <main class="container landing-layout">
+    <section class="card landing-hero">
+      <div class="hero-copy">
+        <p class="hero-kicker">YOUR RUNNING COMPANION</p>
+        <h2>Track runs, celebrate progress, and stay consistent.</h2>
+        <p class="hero-text">
+          Built for runners who want clean stats, social motivation, and smooth activity tracking in one place.
+        </p>
+
+        <div class="hero-actions">
+          <a href="/signin.html" class="cta-link">Already a user? <strong>Sign In</strong></a>
+          <a href="/register.html" class="cta-link alt">New user? <strong>Register</strong></a>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1200&q=80" alt="Runner training on track" />
+      </div>
+    </section>
+
+    <section class="card fact-strip">
+      <p class="fact-title">🏁 Daily Fitness Fact</p>
+      <p id="runningFact" class="fact-text">Loading a fresh running fact...</p>
+    </section>
+
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

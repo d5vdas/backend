@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run Run Run - Social</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-page="social">
+  <header class="topbar">
+    <div>
+      <h1>🏃 Run Run Run</h1>
+      <p>Social</p>
+    </div>
+    <span class="badge">Page: Social</span>
+  </header>
+
+  <main class="container">
+    <section class="card hero">
+      <h2>Social Module</h2>
+      <p class="muted-line">Connect, like and comment on activities.</p>
+      <button id="logoutBtn" class="secondary">Logout</button>
+    </section>
+
+    <section class="card">
+      <button onclick="window.location.href='/dashboard.html'">← Back to Dashboard</button>
+    </section>
+
+    <section class="section-title"><h2>Social</h2></section>
+    <section class="card grid-2">
+      <div>
+        <h3>Follow / Likes</h3>
+        <label>User ID <input id="followUserId" type="number" /></label>
+        <button id="followBtn">Follow</button>
+        <button id="unfollowBtn" class="secondary">Unfollow</button>
+
+        <hr />
+        <label>Activity ID <input id="socialActivityId" type="number" /></label>
+        <button id="likeBtn">Like</button>
+        <button id="unlikeBtn" class="secondary">Unlike</button>
+      </div>
+
+      <div>
+        <h3>Comments / Counts</h3>
+        <label>Activity ID <input id="commentActivityId" type="number" /></label>
+        <label>Comment Text <input id="commentText" type="text" /></label>
+        <button id="commentBtn">Comment</button>
+
+        <label>Comment ID <input id="commentId" type="number" /></label>
+        <button id="deleteCommentBtn" class="secondary">Delete Comment</button>
+
+        <hr />
+        <label>Activity ID <input id="countsActivityId" type="number" /></label>
+        <button id="activityCountsBtn">Activity Counts</button>
+        <button id="myFollowsBtn">My Follow Counts</button>
+        <pre id="socialOutput"></pre>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

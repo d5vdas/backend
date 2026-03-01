@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run Run Run - Activity</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-page="activity">
+  <header class="topbar">
+    <div>
+      <h1>🏃 Run Run Run</h1>
+      <p>Activity</p>
+    </div>
+    <span class="badge">Page: Activity</span>
+  </header>
+
+  <main class="container">
+    <section class="card hero">
+      <h2>Activity Module</h2>
+      <p class="muted-line">Track and manage running activities.</p>
+      <button id="logoutBtn" class="secondary">Logout</button>
+    </section>
+
+    <section class="card activity-launcher">
+      <h2>Start an Activity</h2>
+      <p class="muted-line">Pick your workout mode and open live tracking.</p>
+      <div class="activity-mode-grid">
+        <a class="mode-card" href="/tracker.html?type=run">
+          <span class="mode-icon">🏃</span>
+          <strong>Run</strong>
+          <small>Track pace, distance, speed</small>
+        </a>
+        <a class="mode-card" href="/tracker.html?type=walk">
+          <span class="mode-icon">🚶</span>
+          <strong>Walk</strong>
+          <small>Ideal for daily walking goals</small>
+        </a>
+        <a class="mode-card" href="/tracker.html?type=cycle">
+          <span class="mode-icon">🚴</span>
+          <strong>Cycle</strong>
+          <small>Real-time cycling activity stats</small>
+        </a>
+      </div>
+    </section>
+
+    <section class="card">
+      <button onclick="window.location.href='/dashboard.html'">← Back to Dashboard</button>
+    </section>
+
+    <section class="section-title"><h2>Previous Activities</h2></section>
+    <section class="card">
+      <div id="activityPreviewList" class="activity-list"></div>
+      <button id="showMoreActivitiesBtn" class="secondary">Show More</button>
+    </section>
+
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

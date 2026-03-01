@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run Run Run - Dashboard</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-page="dashboard">
+  <header class="topbar">
+    <div>
+      <h1>🏃 Run Run Run</h1>
+      <p>Dashboard</p>
+    </div>
+    <span class="badge">Page: Dashboard</span>
+  </header>
+
+  <main class="container">
+    <section class="card hero">
+      <h2>Welcome</h2>
+      <p class="muted-line">Choose where you want to go next.</p>
+      <button id="logoutBtn" class="secondary">Logout</button>
+    </section>
+
+    <section class="card">
+      <h2>Choose Module</h2>
+      <button id="goActivityBtn">Go to Activity</button>
+      <button id="goSocialBtn">Go to Social</button>
+    </section>
+
+    <section class="card">
+      <h3>Profile</h3>
+      <button id="meBtn">Load /users/me</button>
+      <pre id="meOutput"></pre>
+    </section>
+
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
