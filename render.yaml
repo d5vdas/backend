@@ -9,31 +9,9 @@ services:
     envVars:
       - key: PORT
         value: 10000
-      - key: DB_HOST
-        fromDatabase:
-          name: runrunrun-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: runrunrun-db
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: runrunrun-db
-          property: database
-      - key: DB_USERNAME
-        fromDatabase:
-          name: runrunrun-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: runrunrun-db
-          property: password
+      # Set DB_HOST/DB_PORT/DB_NAME/DB_USERNAME/DB_PASSWORD manually
+      # in Render Web Service -> Environment (use your existing free Postgres)
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRATION_MS
         value: 86400000
-
-databases:
-  - name: runrunrun-db
-    plan: free
