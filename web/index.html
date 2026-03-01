@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RunRunRun Web</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>RunRunRun (Web Demo)</h1>
+    <p class="hint">Shareable browser app for your friends</p>
+
+    <div class="card">
+      <label>Backend Base URL</label>
+      <input id="baseUrl" placeholder="https://your-render-url.onrender.com" />
+      <small>Use your Render backend URL</small>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Auth</h3>
+        <input id="name" placeholder="Name" />
+        <input id="email" placeholder="Email" />
+        <input id="password" placeholder="Password" type="password" />
+        <div class="row">
+          <button id="registerBtn">Register</button>
+          <button id="loginBtn">Login</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Activity</h3>
+        <input id="activityType" placeholder="RUN / WALK / RIDE" value="RUN" />
+        <div class="row">
+          <button id="startBtn">Start</button>
+          <button id="stopBtn">Stop Selected</button>
+        </div>
+        <button id="loadActivitiesBtn">Load My Activities</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Social</h3>
+      <input id="activityId" placeholder="Activity ID" />
+      <input id="comment" placeholder="Comment text" />
+      <div class="row">
+        <button id="likeBtn">Like</button>
+        <button id="commentBtn">Comment</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Activities</h3>
+      <ul id="activities"></ul>
+    </div>
+
+    <pre id="output"></pre>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
