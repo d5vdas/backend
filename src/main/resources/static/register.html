@@ -38,11 +38,27 @@
       <label>Email <input id="regEmail" type="email" placeholder="you@example.com" /></label>
       <label>Password <input id="regPassword" type="password" placeholder="Min 6 characters" /></label>
       <button id="registerBtn">Register</button>
+      <div class="auth-btn-row">
+        <button id="firebaseGoogleRegisterBtn" class="btn-link" type="button">Sign up with Google</button>
+      </div>
       <p class="switch-text">Already have an account? <a href="/signin.html">Sign in</a></p>
     </section>
 
   </main>
 
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script>
+    window.FIREBASE_WEB_CONFIG = {
+      apiKey: "AIzaSyBq6mv_p9C0ZqZuWpo4EvpWsWBt6dhJ_gA",
+      authDomain: "backend-bd4a4.firebaseapp.com",
+      projectId: "backend-bd4a4",
+      storageBucket: "backend-bd4a4.firebasestorage.app",
+      messagingSenderId: "507443341393",
+      appId: "1:507443341393:web:014f35c16450f7ef42b070",
+      measurementId: "G-6X8VP5MZTR"
+    };
+  </script>
   <script src="/app.js"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 package com.run_run_run.backend.auth;
 
 import com.run_run_run.backend.auth.dto.AuthResponse;
+import com.run_run_run.backend.auth.dto.FirebaseAuthRequest;
 import com.run_run_run.backend.auth.dto.LoginRequest;
 import com.run_run_run.backend.auth.dto.RegisterRequest;
 import jakarta.validation.Valid;
@@ -15,9 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final FirebaseAuthService firebaseAuthService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService,
+                          FirebaseAuthService firebaseAuthService) {
         this.authService = authService;
+        this.firebaseAuthService = firebaseAuthService;
     }
 
     @PostMapping("/register")
@@ -28,5 +32,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/firebase")
+    public ResponseEntity<AuthResponse> firebase(@Valid @RequestBody FirebaseAuthRequest request) {
+        return ResponseEntity.ok(firebaseAuthService.authenticate(request));
     }
 }

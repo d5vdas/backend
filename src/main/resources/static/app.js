@@ -64,6 +64,7 @@ function toLocalDateTimeString(date = new Date()) {
 }
 
 function init() {
+  initFirebaseAuth();
   alignBaseUrlWithCurrentOrigin();
   guardAuthenticatedPages();
   setValue("baseUrl", state.baseUrl);
@@ -85,6 +86,134 @@ function init() {
   loadRunningFact();
   preventAccidentalSubmit();
   log(`Ready on ${page} page.`);
+}
+
+function initFirebaseAuth() {
+  if (!window.firebase || !window.FIREBASE_WEB_CONFIG) return;
+  if (!isFirebaseConfigUsable()) {
+    log("Firebase config is missing. Update FIREBASE_WEB_CONFIG in signin/register HTML.");
+    return;
+  }
+  if (!window.firebase.apps?.length) {
+    window.firebase.initializeApp(window.FIREBASE_WEB_CONFIG);
+  }
+  handleFirebaseRedirectResult();
+}
+
+function isFirebaseConfigUsable() {
+  const cfg = window.FIREBASE_WEB_CONFIG;
+  if (!cfg) return false;
+
+  const required = ["apiKey", "authDomain", "projectId", "appId"];
+  for (const key of required) {
+    const value = String(cfg[key] || "").trim();
+    if (!value) return false;
+    if (value.includes("YOUR_FIREBASE_") || value.includes("YOUR_FIREBASE_PROJECT")) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function firebaseErrorHelpMessage(code, message, providerType = "google") {
+  const providerLabel = providerType === "github" ? "GitHub" : "Google";
+  switch (code) {
+    case "auth/invalid-api-key":
+      return "Firebase API key is invalid. Check FIREBASE_WEB_CONFIG.apiKey.";
+    case "auth/unauthorized-domain":
+      return "This localhost domain is not authorized in Firebase Auth. Add localhost in Firebase Console > Authentication > Settings > Authorized domains.";
+    case "auth/operation-not-allowed":
+      return "Provider is disabled in Firebase Console. Enable Google/GitHub in Authentication > Sign-in method.";
+    case "auth/configuration-not-found":
+      return `Firebase Authentication configuration not found for ${providerLabel}. In Firebase Console > Authentication: click Get started, enable ${providerLabel} under Sign-in method, and add localhost in Authorized domains.`;
+    case "auth/popup-closed-by-user":
+      return "Login popup was closed before completion. Please try again.";
+    default:
+      return message || "Unknown Firebase auth error.";
+  }
+}
+
+async function handleFirebaseRedirectResult() {
+  try {
+    if (!window.firebase?.auth) return;
+    const auth = window.firebase.auth();
+    const result = await auth.getRedirectResult();
+    if (!result?.user) return;
+
+    const idToken = await result.user.getIdToken();
+    const name = result.user.displayName || "";
+
+    const body = await api(
+      "/auth/firebase",
+      {
+        method: "POST",
+        body: JSON.stringify({ idToken, name }),
+      },
+      false
+    );
+
+    setToken(body.token);
+    renderAuthStatus(result.user.email || "");
+    goToDashboard();
+  } catch (e) {
+    log("Firebase redirect login failed", { error: e.message });
+  }
+}
+
+async function loginWithFirebaseProvider(providerType = "google") {
+  try {
+    if (!isFirebaseConfigUsable()) {
+      alert("Firebase config is not set. Update FIREBASE_WEB_CONFIG in signin.html/register.html first.");
+      return;
+    }
+
+    if (!window.firebase?.auth) throw new Error("Firebase SDK not loaded");
+
+    const auth = window.firebase.auth();
+    const provider = providerType === "github"
+      ? new window.firebase.auth.GithubAuthProvider()
+      : new window.firebase.auth.GoogleAuthProvider();
+
+    const result = await auth.signInWithPopup(provider);
+    const idToken = await result.user.getIdToken();
+    const name = result.user.displayName || "";
+
+    const body = await api(
+      "/auth/firebase",
+      {
+        method: "POST",
+        body: JSON.stringify({ idToken, name }),
+      },
+      false
+    );
+
+    setToken(body.token);
+    renderAuthStatus(result.user.email || "");
+    goToDashboard();
+  } catch (e) {
+    const code = e?.code || "";
+    const popupBlocked = code === "auth/popup-blocked" || code === "auth/web-storage-unsupported";
+
+    if (popupBlocked) {
+      try {
+        const auth = window.firebase.auth();
+        const provider = providerType === "github"
+          ? new window.firebase.auth.GithubAuthProvider()
+          : new window.firebase.auth.GoogleAuthProvider();
+
+        log("Popup blocked by browser. Switching to redirect login...");
+        await auth.signInWithRedirect(provider);
+        return;
+      } catch (redirectError) {
+        log("Firebase redirect fallback failed", { error: redirectError.message });
+        return;
+      }
+    }
+
+    const help = firebaseErrorHelpMessage(code, e.message, providerType);
+    log("Firebase login failed", { error: e.message, code, help });
+    alert(help);
+  }
 }
 
 function initTrackerPage() {
@@ -990,6 +1119,8 @@ function wireCommonActions() {
 function wirePageActions() {
   bind("registerBtn", register);
   bind("loginBtn", login);
+  bind("firebaseGoogleLoginBtn", () => loginWithFirebaseProvider("google"));
+  bind("firebaseGoogleRegisterBtn", () => loginWithFirebaseProvider("google"));
 
   bind("goActivityBtn", goToActivity);
   bind("goActivityQuickBtn", goToActivity);
