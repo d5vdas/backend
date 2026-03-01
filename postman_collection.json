@@ -1,0 +1,36 @@
+{
+  "info": {
+    "name": "Run Run Run Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Register",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\n  \"name\": \"Dev\",\n  \"email\": \"dev@example.com\",\n  \"password\": \"secret123\"\n}"},
+        "url": "{{baseUrl}}/auth/register"
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {"mode":"raw","raw":"{\n  \"email\": \"dev@example.com\",\n  \"password\": \"secret123\"\n}"},
+        "url": "{{baseUrl}}/auth/login"
+      }
+    }
+  ],
+  "variable": [
+    {"key":"baseUrl","value":"http://localhost:8083"}
+  ]
+}
