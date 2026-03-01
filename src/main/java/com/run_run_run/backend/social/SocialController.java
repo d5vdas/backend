@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -58,5 +59,21 @@ public class SocialController {
     @GetMapping("/me/follows/counts")
     public ResponseEntity<Map<String, Long>> myFollowCounts(Authentication authentication) {
         return ResponseEntity.ok(socialService.myFollowCounts(authentication.getName()));
+    }
+
+    @GetMapping("/feed")
+    public ResponseEntity<List<Map<String, Object>>> feed(Authentication authentication) {
+        return ResponseEntity.ok(socialService.feed(authentication.getName()));
+    }
+
+    @GetMapping("/users/search")
+    public ResponseEntity<List<Map<String, Object>>> searchUsers(Authentication authentication,
+                                                                 @RequestParam(name = "q", defaultValue = "") String q) {
+        return ResponseEntity.ok(socialService.searchUsers(authentication.getName(), q));
+    }
+
+    @GetMapping("/notifications")
+    public ResponseEntity<List<Map<String, Object>>> notifications(Authentication authentication) {
+        return ResponseEntity.ok(socialService.notifications(authentication.getName()));
     }
 }

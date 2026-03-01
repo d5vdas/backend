@@ -18,7 +18,7 @@
   <main class="container">
     <section class="card hero">
       <h2>Social Module</h2>
-      <p class="muted-line">Connect, like and comment on activities.</p>
+      <p class="muted-line">Discover people, follow runners, react to activities, and view your social feed.</p>
       <button id="logoutBtn" class="secondary">Logout</button>
     </section>
 
@@ -26,35 +26,33 @@
       <button onclick="window.location.href='/dashboard.html'">← Back to Dashboard</button>
     </section>
 
-    <section class="section-title"><h2>Social</h2></section>
-    <section class="card grid-2">
-      <div>
-        <h3>Follow / Likes</h3>
-        <label>User ID <input id="followUserId" type="number" /></label>
-        <button id="followBtn">Follow</button>
-        <button id="unfollowBtn" class="secondary">Unfollow</button>
-
-        <hr />
-        <label>Activity ID <input id="socialActivityId" type="number" /></label>
-        <button id="likeBtn">Like</button>
-        <button id="unlikeBtn" class="secondary">Unlike</button>
+    <section class="card social-search-card">
+      <h3>🔎 Search Runners</h3>
+      <div class="social-row">
+        <input id="userSearchInput" type="text" placeholder="Search by name or email" />
+        <button id="userSearchBtn">Search</button>
       </div>
+      <div id="userSearchResults" class="social-list"></div>
+    </section>
 
-      <div>
-        <h3>Comments / Counts</h3>
-        <label>Activity ID <input id="commentActivityId" type="number" /></label>
-        <label>Comment Text <input id="commentText" type="text" /></label>
-        <button id="commentBtn">Comment</button>
-
-        <label>Comment ID <input id="commentId" type="number" /></label>
-        <button id="deleteCommentBtn" class="secondary">Delete Comment</button>
-
-        <hr />
-        <label>Activity ID <input id="countsActivityId" type="number" /></label>
-        <button id="activityCountsBtn">Activity Counts</button>
-        <button id="myFollowsBtn">My Follow Counts</button>
-        <pre id="socialOutput"></pre>
+    <section class="card social-feed-card">
+      <div class="social-row between">
+        <h3>📰 Feed Timeline</h3>
+        <button id="refreshFeedBtn" class="secondary">Refresh Feed</button>
       </div>
+      <div id="socialFeedList" class="social-list"></div>
+    </section>
+
+    <section class="card social-notify-card">
+      <div class="social-row between">
+        <h3>🔔 Notifications</h3>
+        <button id="refreshNotificationsBtn" class="secondary">Refresh Notifications</button>
+      </div>
+      <div id="socialNotificationsList" class="social-list"></div>
+    </section>
+
+    <section class="card">
+      <pre id="socialOutput"></pre>
     </section>
 
   </main>

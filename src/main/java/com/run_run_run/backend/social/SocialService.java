@@ -9,6 +9,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -139,6 +143,91 @@ public class SocialService {
         long followers = followRepository.countByFollowee(user);
         long following = followRepository.countByFollower(user);
         return Map.of("followers", followers, "following", following);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> feed(String email) {
+        User me = getUserByEmail(email);
+        List<User> followees = followRepository.findByFollowerOrderByCreatedAtDesc(me)
+                .stream()
+                .map(Follow::getFollowee)
+                .distinct()
+                .toList();
+
+        if (followees.isEmpty()) return List.of();
+
+        List<Activity> activities = activityRepository.findTop50ByUserInOrderByStartedAtDesc(followees);
+        return activities.stream().map(a -> {
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("activityId", a.getId());
+            row.put("type", a.getType());
+            row.put("status", a.getStatus().name());
+            row.put("startedAt", a.getStartedAt());
+            row.put("durationSeconds", a.getDurationSeconds());
+            row.put("distanceMeters", a.getDistanceMeters());
+            row.put("userId", a.getUser().getId());
+            row.put("userName", a.getUser().getName());
+            row.put("userEmail", a.getUser().getEmail());
+            row.put("likes", activityLikeRepository.countByActivity(a));
+            row.put("comments", activityCommentRepository.countByActivity(a));
+            row.put("likedByMe", activityLikeRepository.existsByUserAndActivity(me, a));
+            return row;
+        }).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> searchUsers(String email, String q) {
+        User me = getUserByEmail(email);
+        String query = q == null ? "" : q.trim();
+        if (query.isBlank()) return List.of();
+
+        return userRepository.findTop20ByNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByNameAsc(query, query)
+                .stream()
+                .map(u -> Map.<String, Object>of(
+                        "id", u.getId(),
+                        "name", u.getName(),
+                        "email", u.getEmail(),
+                        "isSelf", u.getId().equals(me.getId()),
+                        "isFollowing", !u.getId().equals(me.getId()) && followRepository.existsByFollowerAndFollowee(me, u)
+                ))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> notifications(String email) {
+        User me = getUserByEmail(email);
+        List<Map<String, Object>> items = new ArrayList<>();
+
+        for (Follow f : followRepository.findTop20ByFolloweeOrderByCreatedAtDesc(me)) {
+            items.add(Map.of(
+                    "type", "follow",
+                    "createdAt", f.getCreatedAt(),
+                    "message", f.getFollower().getName() + " started following you"
+            ));
+        }
+
+        for (ActivityLike l : activityLikeRepository.findTop30ByActivity_UserOrderByCreatedAtDesc(me)) {
+            if (l.getUser().getId().equals(me.getId())) continue;
+            items.add(Map.of(
+                    "type", "like",
+                    "createdAt", l.getCreatedAt(),
+                    "message", l.getUser().getName() + " liked your activity #" + l.getActivity().getId()
+            ));
+        }
+
+        for (ActivityComment c : activityCommentRepository.findTop30ByActivity_UserOrderByCreatedAtDesc(me)) {
+            if (c.getUser().getId().equals(me.getId())) continue;
+            items.add(Map.of(
+                    "type", "comment",
+                    "createdAt", c.getCreatedAt(),
+                    "message", c.getUser().getName() + " commented on your activity #" + c.getActivity().getId()
+            ));
+        }
+
+        return items.stream()
+                .sorted(Comparator.comparing((Map<String, Object> x) -> String.valueOf(x.get("createdAt"))).reversed())
+                .limit(25)
+                .toList();
     }
 
     private User getUserByEmail(String email) {

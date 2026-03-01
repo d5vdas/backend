@@ -68,9 +68,6 @@ function init() {
   guardAuthenticatedPages();
   setValue("baseUrl", state.baseUrl);
   renderAuthStatus();
-  if (state.token && page === "dashboard") {
-    loadMe();
-  }
   if (page === "tracker") {
     initTrackerPage();
   }
@@ -79,6 +76,9 @@ function init() {
   }
   if (page === "activity-history") {
     loadAllActivitiesHistory();
+  }
+  if (page === "social") {
+    loadSocialPageData();
   }
   wireCommonActions();
   wirePageActions();
@@ -748,16 +748,6 @@ function goToSocial() {
   window.location.href = "/social.html";
 }
 
-async function loadMe() {
-  try {
-    const body = await api("/users/me", { method: "GET" });
-    setText("meOutput", JSON.stringify(body, null, 2));
-    log("Loaded profile", body);
-  } catch (e) {
-    log("Load profile failed", { error: e.message });
-  }
-}
-
 async function startActivity() {
   try {
     const body = await api("/activities/start", {
@@ -828,88 +818,162 @@ async function loadActivityDetail() {
   }
 }
 
-async function follow() {
-  try {
-    const userId = Number(getValue("followUserId"));
-    const body = await api(`/social/follow/${userId}`, { method: "POST" });
-    log("Follow success", body);
-  } catch (e) {
-    log("Follow failed", { error: e.message });
-  }
+async function loadSocialPageData() {
+  await Promise.allSettled([
+    loadSocialFeed(),
+    loadNotifications(),
+  ]);
 }
 
-async function unfollow() {
-  try {
-    const userId = Number(getValue("followUserId"));
-    const body = await api(`/social/follow/${userId}`, { method: "DELETE" });
-    log("Unfollow success", body);
-  } catch (e) {
-    log("Unfollow failed", { error: e.message });
-  }
+function formatWhen(value) {
+  if (!value) return "--";
+  return new Date(value).toLocaleString();
 }
 
-async function like() {
-  try {
-    const activityId = Number(getValue("socialActivityId"));
-    const body = await api(`/social/activities/${activityId}/like`, { method: "POST" });
-    log("Like success", body);
-  } catch (e) {
-    log("Like failed", { error: e.message });
-  }
+function fmtKm(distanceMeters) {
+  return ((distanceMeters || 0) / 1000).toFixed(2);
 }
 
-async function unlike() {
-  try {
-    const activityId = Number(getValue("socialActivityId"));
-    const body = await api(`/social/activities/${activityId}/like`, { method: "DELETE" });
-    log("Unlike success", body);
-  } catch (e) {
-    log("Unlike failed", { error: e.message });
+function renderUserSearchResults(items) {
+  const host = el("userSearchResults");
+  if (!host) return;
+  if (!items || !items.length) {
+    host.innerHTML = `<p class="muted-line">No users found.</p>`;
+    return;
   }
-}
 
-async function comment() {
-  try {
-    const activityId = Number(getValue("commentActivityId"));
-    const text = getValue("commentText");
-    const body = await api(`/social/activities/${activityId}/comment`, {
-      method: "POST",
-      body: JSON.stringify({ text }),
+  host.innerHTML = items.map((u) => `
+    <article class="social-item">
+      <div>
+        <h4>${u.name || "Unknown"}</h4>
+        <p class="activity-meta">${u.email || ""}</p>
+      </div>
+      <div>
+        ${u.isSelf ? `<span class="badge">You</span>` : `
+          <button data-follow-id="${u.id}" class="${u.isFollowing ? "secondary" : ""}">${u.isFollowing ? "Unfollow" : "Follow"}</button>
+        `}
+      </div>
+    </article>
+  `).join("");
+
+  host.querySelectorAll("button[data-follow-id]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = Number(btn.getAttribute("data-follow-id"));
+      const action = btn.textContent?.trim().toLowerCase() === "follow" ? "follow" : "unfollow";
+      try {
+        await api(`/social/follow/${id}`, { method: action === "follow" ? "POST" : "DELETE" });
+        await searchUsers();
+        await loadSocialFeed();
+        await loadNotifications();
+      } catch (e) {
+        log("Follow/unfollow failed", { error: e.message });
+      }
     });
-    log("Comment success", body);
+  });
+}
+
+async function searchUsers() {
+  try {
+    const q = getValue("userSearchInput");
+    if (!q) {
+      renderUserSearchResults([]);
+      return;
+    }
+    const items = await api(`/social/users/search?q=${encodeURIComponent(q)}`, { method: "GET" });
+    renderUserSearchResults(items);
   } catch (e) {
-    log("Comment failed", { error: e.message });
+    log("Search users failed", { error: e.message });
   }
 }
 
-async function deleteComment() {
+function renderFeed(items) {
+  const host = el("socialFeedList");
+  if (!host) return;
+  if (!items || !items.length) {
+    host.innerHTML = `<p class="muted-line">No feed yet. Follow runners to see their activities.</p>`;
+    return;
+  }
+
+  host.innerHTML = items.map((a) => `
+    <article class="social-item">
+      <h4>${a.userName || "Runner"} • ${(a.type || "ACTIVITY").toUpperCase()} • ${a.status || "--"}</h4>
+      <p class="activity-meta">${fmtKm(a.distanceMeters)} km • ${formatDuration(a.durationSeconds || 0)} • ${formatWhen(a.startedAt)}</p>
+      <p class="activity-meta">❤️ ${a.likes || 0} • 💬 ${a.comments || 0}</p>
+      <div class="social-row">
+        <button data-like-id="${a.activityId}" class="${a.likedByMe ? "secondary" : ""}">${a.likedByMe ? "Unlike" : "Like"}</button>
+        <input data-comment-text="${a.activityId}" type="text" placeholder="Add a comment" />
+        <button data-comment-id="${a.activityId}">Comment</button>
+      </div>
+    </article>
+  `).join("");
+
+  host.querySelectorAll("button[data-like-id]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = Number(btn.getAttribute("data-like-id"));
+      const action = btn.textContent?.trim().toLowerCase() === "like" ? "POST" : "DELETE";
+      try {
+        await api(`/social/activities/${id}/like`, { method: action });
+        await loadSocialFeed();
+        await loadNotifications();
+      } catch (e) {
+        log("Like toggle failed", { error: e.message });
+      }
+    });
+  });
+
+  host.querySelectorAll("button[data-comment-id]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = Number(btn.getAttribute("data-comment-id"));
+      const input = host.querySelector(`input[data-comment-text="${id}"]`);
+      const text = (input?.value || "").trim();
+      if (!text) return;
+      try {
+        await api(`/social/activities/${id}/comment`, {
+          method: "POST",
+          body: JSON.stringify({ text }),
+        });
+        if (input) input.value = "";
+        await loadSocialFeed();
+        await loadNotifications();
+      } catch (e) {
+        log("Comment failed", { error: e.message });
+      }
+    });
+  });
+}
+
+async function loadSocialFeed() {
   try {
-    const commentId = Number(getValue("commentId"));
-    const body = await api(`/social/comments/${commentId}`, { method: "DELETE" });
-    log("Delete comment success", body);
+    const items = await api("/social/feed", { method: "GET" });
+    renderFeed(items);
   } catch (e) {
-    log("Delete comment failed", { error: e.message });
+    log("Load feed failed", { error: e.message });
   }
 }
 
-async function activityCounts() {
-  try {
-    const activityId = Number(getValue("countsActivityId"));
-    const body = await api(`/social/activities/${activityId}/counts`, { method: "GET" });
-    setText("socialOutput", JSON.stringify(body, null, 2));
-    log("Activity counts loaded", body);
-  } catch (e) {
-    log("Activity counts failed", { error: e.message });
+function renderNotifications(items) {
+  const host = el("socialNotificationsList");
+  if (!host) return;
+  if (!items || !items.length) {
+    host.innerHTML = `<p class="muted-line">No notifications yet.</p>`;
+    return;
   }
+
+  host.innerHTML = items.map((n) => `
+    <article class="social-item">
+      <h4>${(n.type || "info").toUpperCase()}</h4>
+      <p class="activity-meta">${n.message || ""}</p>
+      <small>${formatWhen(n.createdAt)}</small>
+    </article>
+  `).join("");
 }
 
-async function myFollows() {
+async function loadNotifications() {
   try {
-    const body = await api(`/social/me/follows/counts`, { method: "GET" });
-    setText("socialOutput", JSON.stringify(body, null, 2));
-    log("My follow counts loaded", body);
+    const items = await api("/social/notifications", { method: "GET" });
+    renderNotifications(items);
   } catch (e) {
-    log("My follow counts failed", { error: e.message });
+    log("Load notifications failed", { error: e.message });
   }
 }
 
@@ -926,9 +990,9 @@ function wireCommonActions() {
 function wirePageActions() {
   bind("registerBtn", register);
   bind("loginBtn", login);
-  bind("meBtn", loadMe);
 
   bind("goActivityBtn", goToActivity);
+  bind("goActivityQuickBtn", goToActivity);
   bind("goSocialBtn", goToSocial);
 
   bind("startActivityBtn", startActivity);
@@ -937,14 +1001,9 @@ function wirePageActions() {
   bind("myActivitiesBtn", loadMyActivities);
   bind("activityDetailBtn", loadActivityDetail);
 
-  bind("followBtn", follow);
-  bind("unfollowBtn", unfollow);
-  bind("likeBtn", like);
-  bind("unlikeBtn", unlike);
-  bind("commentBtn", comment);
-  bind("deleteCommentBtn", deleteComment);
-  bind("activityCountsBtn", activityCounts);
-  bind("myFollowsBtn", myFollows);
+  bind("userSearchBtn", searchUsers);
+  bind("refreshFeedBtn", loadSocialFeed);
+  bind("refreshNotificationsBtn", loadNotifications);
   bind("showMoreActivitiesBtn", () => {
     window.location.href = "/activity-history.html";
   });

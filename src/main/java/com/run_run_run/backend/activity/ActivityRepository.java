@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
     List<Activity> findByUserOrderByStartedAtDesc(User user);
+    List<Activity> findTop50ByUserInOrderByStartedAtDesc(List<User> users);
     Optional<Activity> findByIdAndUser(Long id, User user);
 }

@@ -7,6 +7,13 @@
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body data-page="dashboard">
+  <div class="live-wallpaper" aria-hidden="true">
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
+    <div class="aurora aurora-3"></div>
+    <div class="grid-glow"></div>
+  </div>
+
   <header class="topbar">
     <div>
       <h1>🏃 Run Run Run</h1>
@@ -15,23 +22,45 @@
     <span class="badge">Page: Dashboard</span>
   </header>
 
-  <main class="container">
-    <section class="card hero">
-      <h2>Welcome</h2>
-      <p class="muted-line">Choose where you want to go next.</p>
-      <button id="logoutBtn" class="secondary">Logout</button>
+  <main class="container dashboard-layout">
+    <section class="card hero dashboard-hero">
+      <div>
+        <p class="hero-kicker">RUNNER HUB</p>
+        <h2>Welcome back 👋</h2>
+        <p class="muted-line">Track your activities, review your profile, and connect with your run community.</p>
+      </div>
+      <div class="hero-actions">
+        <button id="goActivityBtn">Go to Activity</button>
+        <button id="goSocialBtn" class="secondary">Go to Social</button>
+        <button id="logoutBtn" class="secondary">Logout</button>
+      </div>
     </section>
 
-    <section class="card">
-      <h2>Choose Module</h2>
-      <button id="goActivityBtn">Go to Activity</button>
-      <button id="goSocialBtn">Go to Social</button>
+    <section class="dashboard-stats-grid">
+      <article class="card quick-stat">
+        <p>🔥 Motivation</p>
+        <h3>Keep Moving</h3>
+        <small>Every small walk counts toward consistency.</small>
+      </article>
+      <article class="card quick-stat">
+        <p>🎯 Daily Goal</p>
+        <h3>30 min</h3>
+        <small>Aim for at least 30 minutes of activity today.</small>
+      </article>
+      <article class="card quick-stat">
+        <p>⚡ Momentum</p>
+        <h3>Build Streaks</h3>
+        <small>Open Activity and complete one session now.</small>
+      </article>
     </section>
 
-    <section class="card">
-      <h3>Profile</h3>
-      <button id="meBtn">Load /users/me</button>
-      <pre id="meOutput"></pre>
+    <section class="card dashboard-cta-banner">
+      <div>
+        <p class="hero-kicker">READY TO TRAIN?</p>
+        <h3>Start your next run in one tap</h3>
+        <p class="muted-line">Jump into live tracker and record distance, pace, and calories in real-time.</p>
+      </div>
+      <button id="goActivityQuickBtn" class="pulse-btn">Start Activity</button>
     </section>
 
   </main>

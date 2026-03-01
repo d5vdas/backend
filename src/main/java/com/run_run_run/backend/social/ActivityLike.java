@@ -33,4 +33,5 @@ public class ActivityLike {
     public void setUser(User user) { this.user = user; }
     public Activity getActivity() { return activity; }
     public void setActivity(Activity activity) { this.activity = activity; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 }

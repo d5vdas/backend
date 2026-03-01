@@ -32,4 +32,5 @@ public class Follow {
     public void setFollower(User follower) { this.follower = follower; }
     public User getFollowee() { return followee; }
     public void setFollowee(User followee) { this.followee = followee; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 }

@@ -38,4 +38,5 @@ public class ActivityComment {
     public void setActivity(Activity activity) { this.activity = activity; }
     public String getText() { return text; }
     public void setText(String text) { this.text = text; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 }
